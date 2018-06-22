@@ -57,7 +57,8 @@ FROM library/ubuntu:18.04
 # Install runtime deps
 RUN apt-get update && apt-get -y install \
   freeglut3 \
-  libxt6
+  libxt6 \
+  libssl1.1
 
 ENV smtkRoot /usr/local/smtk
 
@@ -71,5 +72,3 @@ RUN echo "export PATH=$smtkRoot/bin:\$PATH" >> ~/setupEnvironment && \
     echo "export LD_LIBRARY_PATH=$smtkRoot/lib" >> ~/setupEnvironment && \
     # In case we want to just use bash...
     echo ". ~/setupEnvironment" >> ~/.bashrc
-
-RUN echo $0
