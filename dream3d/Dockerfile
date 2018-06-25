@@ -115,11 +115,28 @@ RUN cd build/dream3d-build && \
   make -j "$(nproc)"
 
 ## Create a new image
-#FROM library/ubuntu:18.04
-#
-## Install runtime deps
-#RUN apt-get update && apt-get -y install \
-#  freeglut3 \
-#  libxt6
-#
-#COPY --from=build /build/smtk/install /usr/local/smtk
+FROM library/ubuntu:18.04
+
+# Install runtime deps
+RUN apt-get update && apt-get -y install \
+  libtbb2 \
+  libqt5core5a \
+  libqt5network5 \
+# Unfortunately, libqt5gui5 is huge (~300MB), and we only need it because we
+# use "Generate IPF Colors" from the Orientation Analysis plugin in Dream3D,
+# and the Orientation Analysis plugin depends on libqt5gui5.
+# It would be very nice if we removed this dependency in the future.
+  libqt5gui5
+
+COPY --from=build /build/dream3d-build/Bin /usr/local/dream3d/Bin
+
+RUN cd /usr/local/dream3d/Bin && \
+  rm -r Data && \
+# The environment setup
+  echo "export PATH=/usr/local/dream3d/Bin:\$PATH" >> ~/setupEnvironment && \
+  echo "export LD_LIBRARY_PATH=/usr/local/dream3d/Bin" >> ~/setupEnvironment && \
+# The command we will run
+  echo "source ~/setupEnvironment" >> ~/runPipelineRunner && \
+  echo "PipelineRunner -p \$1" >> ~/runPipelineRunner
+
+ENTRYPOINT ["bash", "/root/runPipelineRunner"]
