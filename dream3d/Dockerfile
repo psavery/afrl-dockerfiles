@@ -45,6 +45,7 @@ RUN mkdir -p src && \
     -DDREAM3D_SDK=$WORKINGDIR/dream3d-sdk \
     -DINSTALL_QT5=OFF \
     -DQMAKE_EXECUTABLE=/usr/bin/qmake \
+    -DBUILD_ITK=OFF \
     -DCMAKE_BUILD_TYPE=Release && \
   make -j "$(nproc)"
 
@@ -64,8 +65,8 @@ RUN cd src && \
   mkdir -p DREAM3D_Plugins && \
   cd DREAM3D_Plugins && \
 # Anisotropy
-  git clone https://github.com/dream3d/Anisotropy && \
-  cd Anisotropy && git checkout bda11716 && cd .. && \
+#  git clone https://github.com/dream3d/Anisotropy && \
+#  cd Anisotropy && git checkout bda11716 && cd .. && \
 # FiberToolbox
   git clone https://github.com/dream3d/FiberToolbox && \
   cd FiberToolbox && git checkout 01dbbc92 && cd .. && \
@@ -85,14 +86,14 @@ RUN cd src && \
   git clone https://github.com/dream3d/DREAM3DReview && \
   cd DREAM3DReview && git checkout 2f86e8f8 && cd .. && \
 # ImageProcessing
-  git clone https://github.com/dream3d/ImageProcessing && \
-  cd ImageProcessing && git checkout 5c1cff27 && cd .. && \
+#  git clone https://github.com/dream3d/ImageProcessing && \
+#  cd ImageProcessing && git checkout 5c1cff27 && cd .. && \
 # UCSBUtilities
   git clone https://github.com/dream3d/UCSBUtilities && \
   cd UCSBUtilities && git checkout acb1d502 && cd ..
 
 RUN export SRCDIR=$PWD/src && \
-    export DREAM3D_EXTRA_PLUGINS="Anisotropy;FiberToolbox;MASSIFUtilities;DDDAnalysisToolbox;HEDMAnalysis;TransformationPhase;DREAM3DReview;ImageProcessing;UCSBUtilities" && \
+    export DREAM3D_EXTRA_PLUGINS="FiberToolbox;MASSIFUtilities;DDDAnalysisToolbox;HEDMAnalysis;TransformationPhase;DREAM3DReview;UCSBUtilities" && \
   cd build && \
   mkdir -p dream3d-build && \
   cd dream3d-build && \
@@ -104,6 +105,9 @@ RUN export SRCDIR=$PWD/src && \
     -DSIMPLProj_SOURCE_DIR=$SRCDIR/SIMPL \
     -DSIMPLViewProj_SOURCE_DIR=$SRCDIR/SIMPLView \
     -DSIMPLView_BUILD_DOCUMENTATION=OFF \
+    -DBUILD_TESTING=OFF \
+    -DSIMPL_BUILD_TESTING=OFF \
+    -DSIMPL_USE_ITK=OFF \
     -DCMAKE_BUILD_TYPE=Release || \
    cmake $SRCDIR/DREAM3D -DDREAM3D_EXTRA_PLUGINS=$DREAM3D_EXTRA_PLUGINS)
 
