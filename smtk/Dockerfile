@@ -51,6 +51,11 @@ RUN mkdir -p src && \
 # Install any pip dependencies.
 RUN /build/smtk/install/bin/pip install jinja2
 
+# Put our afrl automation scripts in
+RUN cd /usr/local && \
+  git clone https://bitbucket.org/psavery/afrl-automation && \
+  rm -rf afrl-automation/inputs
+
 # Create a new image
 FROM library/ubuntu:18.04
 
@@ -63,6 +68,8 @@ RUN apt-get update && apt-get -y install \
 ENV smtkRoot /usr/local/smtk
 
 COPY --from=build /build/smtk/install $smtkRoot
+
+COPY --from=build /usr/local/afrl-automation /usr/local/afrl-automation
 
 # Setup environment variables. We must run '. ~/setupEnvironment' for commands
 # from here on out.
