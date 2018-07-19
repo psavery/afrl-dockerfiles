@@ -53,7 +53,7 @@ RUN /build/smtk/install/bin/pip install jinja2
 
 # Put our afrl automation scripts in
 RUN cd /usr/local && \
-  git clone https://bitbucket.org/psavery/afrl-automation && \
+  git clone -b speed https://bitbucket.org/psavery/afrl-automation && \
   rm -rf afrl-automation/inputs
 
 # Create a new image
