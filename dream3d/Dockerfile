@@ -67,9 +67,6 @@ RUN cd src && \
 # Anisotropy
 #  git clone https://github.com/dream3d/Anisotropy && \
 #  cd Anisotropy && git checkout bda11716 && cd .. && \
-# FiberToolbox
-  git clone https://github.com/dream3d/FiberToolbox && \
-  cd FiberToolbox && git checkout 01dbbc92 && cd .. && \
 # MASSIFUtilities
   git clone https://github.com/dream3d/MASSIFUtilities && \
   cd MASSIFUtilities && git checkout c01e47ef && cd .. && \
@@ -93,7 +90,7 @@ RUN cd src && \
   cd UCSBUtilities && git checkout acb1d502 && cd ..
 
 RUN export SRCDIR=$PWD/src && \
-    export DREAM3D_EXTRA_PLUGINS="FiberToolbox;MASSIFUtilities;DDDAnalysisToolbox;HEDMAnalysis;TransformationPhase;DREAM3DReview;UCSBUtilities" && \
+    export DREAM3D_EXTRA_PLUGINS="MASSIFUtilities;DDDAnalysisToolbox;HEDMAnalysis;TransformationPhase;DREAM3DReview;UCSBUtilities" && \
   cd build && \
   mkdir -p dream3d-build && \
   cd dream3d-build && \
@@ -121,12 +118,7 @@ FROM library/ubuntu:18.04
 RUN apt-get update && apt-get -y install \
   libtbb2 \
   libqt5core5a \
-  libqt5network5 \
-# Unfortunately, libqt5gui5 is huge (~300MB), and we only need it because we
-# use "Generate IPF Colors" from the Orientation Analysis plugin in Dream3D,
-# and the Orientation Analysis plugin depends on libqt5gui5.
-# It would be very nice if we removed this dependency in the future.
-  libqt5gui5
+  libqt5network5
 
 COPY --from=build /build/dream3d-build/Bin /usr/local/dream3d/Bin
 
