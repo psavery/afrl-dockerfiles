@@ -51,10 +51,9 @@ ENV SOURCE_DIR=$WORKSPACE/DREAM3D
 
 # Create the DREAM3D_SDK Directory
 RUN mkdir -p $DREAM3D_SDK && \
-  chmod -R 0777 $DREAM3D_SDK 
-
+  chmod -R 0777 $DREAM3D_SDK && \
 # Install CMake 3.x
-RUN cd $DREAM3D_SDK && \
+  cd $DREAM3D_SDK && \
   wget https://cmake.org/files/v$CMAKE_VERSION/$CMAKE_NAME.tar.gz && \
   tar -xzvf $CMAKE_NAME.tar.gz && \
   rm -rf $CMAKE_NAME.tar.tgz
@@ -97,9 +96,13 @@ RUN echo "Cloning DREAM3DSuperbuild..." && \
   $SDK_SOURCE_DIR
 
   # Build the SDK by compiling sources or downloading prebuilt binaries
+  # Be sure to untar the data directories so that the installation will work
 RUN cd $SDK_BUILD_DIR && \
   export PATH=$PATH:/opt/qt511/bin && \
-  make -j "$(nproc)"
+  make -j "$(nproc)" && \
+  cd $DREAM3D_SDK/DREAM3D_Data/Data && \
+  tar -xvzf SmallIN100.tar.gz && \
+  tar -xvzf Image.tar.gz
 
 # Create a directory for the actual DREAM.3D source codes
 RUN mkdir -p $WORKSPACE && \
@@ -145,10 +148,13 @@ RUN mkdir -p $BUILD_DIR && \
   -DSIMPL_USE_QtWebEngine=OFF \
   -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
   -DDREAM3D_EXTRA_PLUGINS=$DREAM3D_EXTRA_PLUGINS \
-  $SOURCE_DIR
-
-RUN cd ${BUILD_DIR} && \
-  make -j "$(nproc)"
+  -DCMAKE_INSTALL_PREFIX=/usr/local/dream3d \
+  $SOURCE_DIR && \
+  # Build DREAM3D
+  cd ${BUILD_DIR} && \
+  make -j "$(nproc)" && \
+  # Create the redistributable package
+  make install
 
 
 ## Create a new image
@@ -160,7 +166,7 @@ FROM library/ubuntu:18.04
 #   libqt5core5a \
 #   libqt5network5 \
 
-COPY --from=build /build/dream3d-build/Bin /usr/local/dream3d/Bin
+COPY --from=build /usr/local/dream3d/Bin /usr/local/dream3d/Bin
 
 RUN cd /usr/local/dream3d/Bin && \
   rm -r Data && \
