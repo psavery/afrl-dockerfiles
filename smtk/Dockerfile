@@ -32,7 +32,7 @@ RUN mkdir -p src && \
   cd src && \
   git clone --recursive https://gitlab.kitware.com/cmb/cmb-superbuild && \
   cd cmb-superbuild && \
-  git checkout b45fd52e && \
+  git checkout 246a34a1 && \
   popd && \
   mkdir -p build/smtk && \
   cd build/smtk && \
