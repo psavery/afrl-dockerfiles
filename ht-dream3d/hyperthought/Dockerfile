@@ -148,7 +148,7 @@ RUN mkdir -p $BUILD_DIR && \
   -DSIMPL_USE_QtWebEngine=OFF \
   -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
   -DDREAM3D_EXTRA_PLUGINS=$DREAM3D_EXTRA_PLUGINS \
-  -DCMAKE_INSTALL_PREFIX=/usr/local/dream3d \
+  -DCMAKE_INSTALL_PREFIX=$DREAM3D_SDK/dream3d \
   $SOURCE_DIR && \
   # Build DREAM3D
   cd ${BUILD_DIR} && \
@@ -166,7 +166,7 @@ FROM library/ubuntu:18.04
 #   libqt5core5a \
 #   libqt5network5 \
 
-COPY --from=build /usr/local/dream3d/Bin /usr/local/dream3d/Bin
+COPY --from=build $DREAM3D_SDK/dream3d/Bin /usr/local/dream3d/Bin
 
 RUN cd /usr/local/dream3d/Bin && \
   rm -r Data && \
